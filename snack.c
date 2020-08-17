@@ -19,7 +19,7 @@ static void snack_init(char *board, int bw, int bh, int *snack, int *shead, int 
     board[0] = board[bw-1] = board[bw*(bh-1)] = board[bw*bh-1] = '+';
     board[bw/2 + bh/2*bw] = '@';
     *ssize = *shead = *stail = 1;
-    snack[2] = bw/2; snack[3] = bh/2;
+    snack[1] = bw * bh / 2;
     snack_feed(board, bw, bh, *ssize);
 }
 
@@ -33,8 +33,8 @@ static void snack_draw(char *board, int bw, int bh) {
 }
 
 static int snack_move(char *board, int bw, int bh, int *snack, int *shead, int *stail, int *ssize, int d) {
-    int hx = snack[*shead * 2 + 0], tx = snack[*stail * 2 + 0], ox = hx;
-    int hy = snack[*shead * 2 + 1], ty = snack[*stail * 2 + 1], oy = hy;
+    int hx = snack[*shead] % bw, tx = snack[*stail] % bw, food;
+    int hy = snack[*shead] / bw, ty = snack[*stail] / bw;
 
     switch (d) {
     case 'J': case 'j': hx--; break; // left
@@ -48,26 +48,24 @@ static int snack_move(char *board, int bw, int bh, int *snack, int *shead, int *
         return 'D'; // 'D' means snake die
     }
 
-    if (board[hx + hy * bw] == 'f') {
-        (*ssize)++; (*shead)++; *shead %= (bw-2)*(bh-2);
-        board[ox + oy * bw] = '#'; board[hx + hy * bw] = '@';
-        snack[*shead * 2 + 0] = hx; snack[*shead * 2 + 1] = hy;
-        if (*ssize == (bw-2)*(bh-2)) return 'W'; // 'W' means win
+    food = (board[hx + hy * bw] == 'f');
+    board[snack[*shead]] = '#';
+    (*shead)++; *shead  %= bw * bh;
+    board[snack[*shead]] = '@';
+    snack[*shead] = hy * bw + hx;
+    if (food) {
+        if (++(*ssize) == (bw - 2) * (bh - 2)) return 'W'; // 'W' means win
         snack_feed(board, bw, bh, *ssize);
         return 'E'; // means snake eat
+    } else {
+        board[snack[*stail]] = ' ';
+        (*stail)++; *stail %= bw * bh;
+        return 'M'; // means snake move
     }
-
-    (*shead)++; *shead %= (bw-2)*(bh-2);
-    (*stail)++; *stail %= (bw-2)*(bh-2);
-    snack[*shead * 2 + 0] = hx; snack[*shead * 2 + 1] = hy;
-    board[ox + oy * bw] = *ssize > 1 ? '#' : ' ';
-    board[tx + ty * bw] = ' ';
-    board[hx + hy * bw] = '@';
-    return 'M';
 }
 
 int main(void) {
-    int  width = 17, height = 11, snack[2 * (width-2) * (height-2)], shead = 0, stail = 0, ssize = 0, op = 0, reinit = 1, ret;
+    int  width = 17, height = 11, snack[width * height], shead = 0, stail = 0, ssize = 0, op = 0, reinit = 1, ret;
     char board[width * height];
     do {
         if (reinit) {
