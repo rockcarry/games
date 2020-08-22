@@ -51,8 +51,8 @@ static int snack_move(char *board, int bw, int bh, int *snack, int *shead, int *
     food = (board[hx + hy * bw] == 'f');
     board[snack[*shead]] = '#';
     (*shead)++; *shead  %= bw * bh;
-    board[snack[*shead]] = '@';
     snack[*shead] = hy * bw + hx;
+    board[snack[*shead]] = '@';
     if (food) {
         if (++(*ssize) == (bw - 2) * (bh - 2)) return 'W'; // 'W' means win
         snack_feed(board, bw, bh, *ssize);
