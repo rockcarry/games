@@ -58,7 +58,7 @@ static int snack_move(char *board, int bw, int bh, int *snack, int *shead, int *
         snack_feed(board, bw, bh, *ssize);
         return 'E'; // means snake eat
     } else {
-        board[snack[*stail]] = ' ';
+        if (hx != tx || hy != ty) board[snack[*stail]] = ' ';
         (*stail)++; *stail %= bw * bh;
         return 'M'; // means snake move
     }
