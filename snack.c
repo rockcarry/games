@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 static void snack_feed(char *board, int bw, int bh, int ssize) {
     int rf = rand() % ((bw - 2) * (bh - 2) - ssize), i;
@@ -25,7 +28,11 @@ static void snack_init(char *board, int bw, int bh, int *snack, int *shead, int 
 
 static void snack_draw(char *board, int bw, int bh) {
     int i, j;
-    system("cls"); printf("i-UP, k-DOWN, j-LEFT, l-RIGHT, q-EXIT\n\n");
+#ifdef WIN32
+    COORD coord = {};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+#endif
+    printf("i-UP, k-DOWN, j-LEFT, l-RIGHT, q-EXIT\n\n");
     for (i=0; i<bh; i++) {
         for (j=0; j<bw; j++) printf("%c ", board[j+i*bw]);
         printf("\n");
