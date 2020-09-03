@@ -11,53 +11,18 @@
 #define getch _getch
 #endif
 
-static int g_all_bricks[7][4][18] = {
-    {
-        { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 4 },
-        { 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 4 },
-    },
-    {
-        { 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-        { 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-    },
-    {
-        { 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-        { 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 3 },
-    },
-    {
-        { 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2 },
-        { 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2 },
-        { 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2 },
-        { 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2 },
-    },
-    {
-        { 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-        { 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 3 },
-    },
-    {
-        { 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 3 },
-        { 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 3 },
-    },
-    {
-        { 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-        { 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2 },
-        { 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 3 },
-    },
+static char g_all_bricks[7][4][4] = {
+    { { 0xF0, 0x00, 4, 1 }, { 0x88, 0x88, 1, 4 }, { 0xF0, 0x00, 4, 1 }, { 0x88, 0x88, 1, 4 } }, // I
+    { { 0xE8, 0x00, 3, 2 }, { 0xC4, 0x40, 2, 3 }, { 0x2E, 0x00, 3, 2 }, { 0x88, 0xC0, 2, 3 } }, // L
+    { { 0xE2, 0x00, 3, 2 }, { 0x44, 0xC0, 2, 3 }, { 0x8E, 0x00, 3, 2 }, { 0xE8, 0x80, 2, 3 } }, // L'
+    { { 0xCC, 0x00, 2, 2 }, { 0xCC, 0x00, 2, 2 }, { 0xCC, 0x00, 2, 2 }, { 0xCC, 0x00, 2, 2 } }, // O
+    { { 0xE4, 0x00, 3, 2 }, { 0x4C, 0x40, 2, 3 }, { 0x4E, 0x00, 3, 2 }, { 0x8C, 0x80, 2, 3 } }, // T
+    { { 0xC6, 0x00, 3, 2 }, { 0x4C, 0x80, 2, 3 }, { 0xC6, 0x00, 3, 2 }, { 0x4C, 0x80, 2, 3 } }, // Z
+    { { 0x6C, 0x00, 3, 2 }, { 0x8C, 0x40, 2, 3 }, { 0x6C, 0x00, 3, 2 }, { 0x8C, 0x40, 2, 3 } }, // Z'
 };
 
-static void draw_game(int board[20][10], int curbricks[16], int curx, int cury,
-                      int nextbricks[16], int level, int score, int lines, int history, int gameover)
+static void draw_game(int board[20][10], char curbricks[2], int curx, int cury,
+                      char nextbricks[2], int level, int score, int lines, int history, int gameover)
 {
     int  i, j, c;
     system("cls");
@@ -66,7 +31,7 @@ static void draw_game(int board[20][10], int curbricks[16], int curx, int cury,
             c = board[i][j] == 1 ? 'B' : board[i][j] == 2 ? 'x' : '.';
             if (j>=curx && j<curx+4 && i>=cury && i<cury+4) {
                 int tx = j - curx, ty = i - cury;
-                if (curbricks[ty * 4 + tx]) {
+                if (curbricks[ty / 2] & (1 << (3 - tx + ((ty&1) ? 0 : 4)))) {
                     c = 'B';
                 }
             }
@@ -87,7 +52,7 @@ static void draw_game(int board[20][10], int curbricks[16], int curx, int cury,
             printf(" ");
             for (j=0; j<4; j++) {
                 int tx = j, ty = i - 2;
-                printf("%c ", nextbricks[ty * 4 + tx] ? 'B' : ' ');
+                printf("%c ", nextbricks[ty / 2] & (1 << (3 - tx + ((ty&1) ? 0 : 4))) ? 'B' : ' ');
             }
         }
         printf("\n");
@@ -95,28 +60,28 @@ static void draw_game(int board[20][10], int curbricks[16], int curx, int cury,
     printf("-------------------");
 }
 
-static int check_collision(int board[20][10], int bricks[16], int curx, int cury)
+static int check_collision(int board[20][10], char bricks[2], int curx, int cury)
 {
     int i, j;
     for (i=0; i<20; i++) {
         for (j=0; j<10; j++) {
             if (j>=curx && j<curx+4 && i>=cury && i<cury+4) {
                 int tx = j - curx, ty = i - cury;
-                if (board[i][j] && bricks[ty * 4 + tx]) return 1;
+                if (board[i][j] && (bricks[ty / 2] & (1 << (3 - tx + ((ty&1) ? 0 : 4))))) return 1;
             }
         }
     }
     return 0;
 }
 
-static void copy_bricks_to_board(int board[20][10], int bricks[16], int curx, int cury)
+static void copy_bricks_to_board(int board[20][10], char bricks[2], int curx, int cury)
 {
     int i, j;
     for (i=0; i<20; i++) {
         for (j=0; j<10; j++) {
             if (j>=curx && j<curx+4 && i>=cury && i<cury+4) {
                 int tx = j - curx, ty = i - cury;
-                if (bricks[ty * 4 + tx]) {
+                if (bricks[ty / 2] & (1 << (3 - tx + ((ty&1) ? 0 : 4)))) {
                     board[i][j] = 1;
                 }
             }
@@ -195,14 +160,14 @@ int main(void)
         case 'D': case 'd': newy++; break;
         case 'J': case 'j': newr++; newr %= 4; break;
         case 'K': case 'k':
-            while (++newy + g_all_bricks[type][newr][17] <= 20 && !check_collision(board, g_all_bricks[type][newr], newx, newy));
+            while (++newy + g_all_bricks[type][newr][3] <= 20 && !check_collision(board, g_all_bricks[type][newr], newx, newy));
             posy = newy - 1;
             break;
         }
 
         collision = check_collision(board, g_all_bricks[type][newr], newx, newy);
-        if (  newx + g_all_bricks[type][newr][16] <= 10
-           && newy + g_all_bricks[type][newr][17] <= 20 && !collision) {
+        if (  newx + g_all_bricks[type][newr][2] <= 10
+           && newy + g_all_bricks[type][newr][3] <= 20 && !collision) {
             posx = newx; posy = newy; rot = newr;
         } else if (key == 'D' || key == 'd' || key == 'K' || key == 'k') {
             copy_bricks_to_board(board, g_all_bricks[type][rot], posx, posy);
