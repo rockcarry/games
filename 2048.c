@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <conio.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #define GAME_SIZE  4
 
 static void left(int *data)
@@ -104,7 +108,10 @@ static int next(int *data)
 static void output(int *data)
 {
     int i, sum = 0;
-
+#ifdef WIN32
+    COORD coord = {};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+#endif
     printf("+--------------------+\n\n");
     for (i=1; i<=GAME_SIZE*GAME_SIZE; i++) {
         if (0 || data[i-1]) {
@@ -115,7 +122,7 @@ static void output(int *data)
         sum += data[i-1];
     }
     printf("+--------------------+\n\n");
-    printf("分数：%d\n\n", sum);
+    printf("分数：%4d\n\n", sum);
 }
 
 int main(void)
