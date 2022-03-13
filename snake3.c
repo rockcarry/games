@@ -4,9 +4,10 @@
 #include <string.h>
 #include <conio.h>
 
-#define GAME_WIDTH      7
+#define GAME_WIDTH      9
 #define GAME_HEIGHT     7
-#define SEARCH_TABSIZE (GAME_WIDTH * GAME_HEIGHT * 8 * 1024)
+#define ALIVE_TABSIZE  (GAME_WIDTH * GAME_HEIGHT * 8)
+#define HELP_TABSIZE   (GAME_WIDTH * GAME_HEIGHT * 16 * 1024)
 #define NODE_EAT_FOOD  (1 << 0)
 #define NODE_IS_ALIVE  (1 << 1)
 static const int ALL_KEYS[4] = { 'E', 'D', 'S', 'F' };
@@ -52,22 +53,24 @@ static int node_extend(NODE *nodecur, NODE *nodenew, int key, int walk)
 
 static int node_alive(NODE *n)
 {
-    int open_head = 0, open_tail = 0, ret = 0, i;
+    int open_head = 0, open_tail = 0, open_size = 0, ret = 0, i;
     NODE *open_table, *node;
 
     if (n->map[n->hx + n->hy * GAME_WIDTH] <= 4 || n->map[n->hx + n->hy * GAME_WIDTH] == GAME_WIDTH * GAME_HEIGHT) return 1;
-    if (!(open_table = malloc(sizeof(NODE) * SEARCH_TABSIZE))) return 0;
-    node = &(open_table[open_tail++]);
+    if (!(open_table = malloc(sizeof(NODE) * ALIVE_TABSIZE))) return 0;
+    node = &(open_table[open_tail]);
+    open_size++, open_tail++;
     node->hx = n->hx, node->hy = n->hy;
     memcpy(node->map , n->map, sizeof(n->map    ));
     memset(node->walk, 0     , sizeof(node->walk));
 
-    while (open_tail < SEARCH_TABSIZE && open_head < open_tail) {
-        node = &(open_table[open_head++]);
-        for (i = 0; i < 4 && open_tail < SEARCH_TABSIZE; i++) {
+    while (open_size > 0 && open_size < ALIVE_TABSIZE) {
+        node = &(open_table[open_head]);
+        open_size--, open_head++; open_head %= ALIVE_TABSIZE;
+        for (i = 0; i < 4 && open_size < ALIVE_TABSIZE; i++) {
             if ((ret = node_extend(node, &(open_table[open_tail]), ALL_KEYS[i], 0)) < 0) continue;
             if ((ret & NODE_IS_ALIVE)) goto done;
-            open_tail++;
+            open_size++, open_tail++; open_tail %= ALIVE_TABSIZE;
         }
     }
 
@@ -76,25 +79,27 @@ done:
     return ret > 0 && (ret & NODE_IS_ALIVE);
 }
 
-static void help(int *map, int hx, int hy, int *key_list, int key_size)
+static void help(int16_t *map, int16_t hx, int16_t hy, int16_t *key_list, int16_t key_size)
 {
-    int open_head = 0, open_tail = 0, ret = 0, i;
+    int open_head = 0, open_tail = 0, open_size = 0, ret = 0, i;
     NODE *open_table = NULL, *node = NULL;
 
-    if (!(open_table = malloc(sizeof(NODE) * SEARCH_TABSIZE))) goto done;
-    node = &(open_table[open_tail++]);
+    if (!(open_table = malloc(sizeof(NODE) * HELP_TABSIZE))) goto done;
+    node = &(open_table[open_tail]);
+    open_size++, open_tail++;
     node->hx = hx, node->hy = hy, node->key = ' ';
     node->prev = node->next = NULL;
     memcpy(node->map , map, sizeof(node->map ));
     memset(node->walk, 0  , sizeof(node->walk));
 
-    while (open_tail < SEARCH_TABSIZE && open_head < open_tail) {
-        node = &(open_table[open_head++]);
-        for (i = 0; i < 4 && open_tail < SEARCH_TABSIZE; i++) {
+    while (open_size > 0 && open_size < HELP_TABSIZE) {
+        node = &(open_table[open_head]);
+        open_size--, open_head++; open_head %= HELP_TABSIZE;
+        for (i = 0; i < 4 && open_size < HELP_TABSIZE; i++) {
             if ((ret = node_extend(node, &(open_table[open_tail]), ALL_KEYS[i], 1)) < 0) continue;
             if (node_alive(&(open_table[open_tail]))) {
                 if (ret & NODE_EAT_FOOD) goto done;
-                open_tail++;
+                open_size++, open_tail++; open_tail %= HELP_TABSIZE;
             }
         }
     }
@@ -104,7 +109,7 @@ done:
         for (node = &(open_table[open_tail]); node != NULL; node = node->prev) if (node->prev) node->prev->next = node;
         for (i = 0, node = open_table->next; i < key_size && node; i++, node = node->next) key_list[i] = node->key;
     } else {
-        printf("i can't help you ! %d %d %d\n", ret, open_head, open_tail);
+        printf("i can't help you ! ret: %d, head: %d, tail: %d, size: %d\n", ret, open_head, open_tail, open_size);
         if (key_list && key_size > 0) *key_list = ' ';
     }
     free(open_table);
