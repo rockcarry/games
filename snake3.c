@@ -20,7 +20,7 @@ typedef struct NODE {
 } NODE;
 
 static int node_extend(NODE *nodecur, NODE *nodenew, int key, int walk)
-{   int ret = 0, t, i, tx, ty;
+{   int ret = 0, t = 0, i, tx, ty;
     nodenew->prev = nodecur, nodenew->next = NULL, nodenew->key = key;
     if      (key == 'E') nodenew->hx = nodecur->hx, nodenew->hy = nodecur->hy - 1;
     else if (key == 'D') nodenew->hx = nodecur->hx, nodenew->hy = nodecur->hy + 1;
@@ -79,11 +79,20 @@ done:
     return ret > 0 && (ret & NODE_IS_ALIVE);
 }
 
-static void help(int16_t *map, int16_t hx, int16_t hy, int16_t *key_list, int16_t key_size)
+typedef struct {
+    char key_list[GAME_WIDTH * GAME_HEIGHT];
+    int  key_num;
+    int  key_cur;
+} HELPER;
+
+static int help(int16_t *map, int16_t hx, int16_t hy, HELPER *helper)
 {
     int open_head = 0, open_tail = 0, open_size = 0, ret = 0, i;
     NODE *open_table = NULL, *node = NULL;
+    char* key_list = helper->key_list;
+    int   key_size = sizeof(helper->key_list);
 
+    if (helper->key_cur < helper->key_num) return helper->key_list[helper->key_cur++];
     if (!(open_table = malloc(sizeof(NODE) * HELP_TABSIZE))) goto done;
     node = &(open_table[open_tail]);
     open_size++, open_tail++;
@@ -107,16 +116,21 @@ static void help(int16_t *map, int16_t hx, int16_t hy, int16_t *key_list, int16_
 done:
     if (ret > 0 && (ret & NODE_EAT_FOOD) && key_list) {
         for (node = &(open_table[open_tail]); node != NULL; node = node->prev) if (node->prev) node->prev->next = node;
-        for (i = 0, node = open_table->next; i < key_size && node; i++, node = node->next) key_list[i] = node->key;
+        for (i = 0, node = open_table->next; i < key_size && node; i++, node = node->next) key_list[i] = (char)node->key;
+        helper->key_cur = 1, helper->key_num = i;
+        ret = helper->key_list[0];
     } else {
         printf("i can't help you ! ret: %d, head: %d, tail: %d, size: %d\n", ret, open_head, open_tail, open_size);
-        if (key_list && key_size > 0) *key_list = ' ';
+        helper->key_cur = 0, helper->key_num = 0;
+        ret = ' ';
     }
     free(open_table);
+    return ret;
 }
 
 int main(void) {
     int16_t map[GAME_WIDTH * GAME_HEIGHT] = {0}, head = GAME_WIDTH * GAME_HEIGHT / 2 - 1, newh = head + 1, die = 0, eat, key, i, n; // define variables
+    HELPER  helper = {0};
     for (map[newh] = -1; !die && system("cls") == 0; ) {
         eat = map[newh] == -1, map[newh] = map[head] + 1, head = newh; // eat food and check win
         for (i = 0, n = rand() % (GAME_WIDTH * GAME_HEIGHT + 1 - map[head]); eat && i < GAME_WIDTH * GAME_HEIGHT; i++) { if (!map[i] && --n <= 0) { map[i] = -1; break; } } // new food
@@ -125,7 +139,7 @@ int main(void) {
             printf("%c%c", i == head ? '@' : map[i] == -1 ? '$' : map[i] == 1 ? '*' : map[i] > 1 ? '#' : '.', i % GAME_WIDTH == GAME_WIDTH - 1 ? '\n' : ' ');
         }
         if (map[head] == GAME_WIDTH * GAME_HEIGHT) break; // check win
-        if ((key = _getch()) == 'H' || key == 'h') help(map, head % GAME_WIDTH, head / GAME_WIDTH, &key, 1);
+        if ((key = _getch()) == 'H' || key == 'h') key  = help(map, head % GAME_WIDTH, head / GAME_WIDTH, &helper);
         if ( key             == 'E' || key == 'e') newh = head - GAME_WIDTH; // handle key
         if ( key             == 'D' || key == 'd') newh = head + GAME_WIDTH;
         if ( key             == 'S' || key == 's') newh = head - 1;
