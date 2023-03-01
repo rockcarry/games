@@ -15,14 +15,18 @@ static void left(int *data)
         for (j=0,f=0,i=0; i<GAME_SIZE; i++) {
             if (data[i]) {
                 if (!f && j>0 && data[j-1] == data[i]) {
-                    data[j-1]+= data[i]; f = 1;
-                } else {
-                    data[j++] = data[i]; f = 0;
+                    data[j-1] += data[i]; 
+                    f = 1;              // represent one merge
+                } 
+                else 
+                {
+                    data[j++] = data[i]; 
+                    f = 0;              // represent no merge
                 }
             }
         }
         while (j < GAME_SIZE) data[j++] = 0;
-        data += GAME_SIZE;
+        data += GAME_SIZE;              // every iteration, the data should at the first place of a row
     }
 }
 
@@ -34,14 +38,16 @@ static void right(int *data)
         for (j=GAME_SIZE-1,f=0,i=GAME_SIZE-1; i>=0; i--) {
             if (data[i]) {
                 if (!f && j<GAME_SIZE-1 && data[j+1] == data[i]) {
-                    data[j+1]+= data[i]; f = 1;
+                    data[j+1]+= data[i]; 
+                    f = 1;              // represent one merge
                 } else {
-                    data[j--] = data[i]; f = 0;
+                    data[j--] = data[i]; 
+                    f = 0;              // represent one merge
                 }
             }
         }
         while (j >= 0) data[j--] = 0;
-        data += GAME_SIZE;
+        data += GAME_SIZE;              // every iteration, the data should at the first place of a row
     }
 }
 
@@ -53,14 +59,16 @@ static void up(int *data)
         for (j=0,f=0,i=0; i<GAME_SIZE; i++) {
             if (data[i*GAME_SIZE]) {
                 if (!f && j>0 && data[(j-1)*GAME_SIZE] == data[i*GAME_SIZE]) {
-                    data[(j-1)*GAME_SIZE]+= data[i*GAME_SIZE]; f = 1;
+                    data[(j-1)*GAME_SIZE]+= data[i*GAME_SIZE]; 
+                    f = 1;              // represent one merge
                 } else {
-                    data[(j++)*GAME_SIZE] = data[i*GAME_SIZE]; f = 0;
+                    data[(j++)*GAME_SIZE] = data[i*GAME_SIZE]; 
+                    f = 0;              // represent one merge
                 }
             }
         }
         while (j < GAME_SIZE) data[(j++)*GAME_SIZE] = 0;
-        data++;
+        data++;                         // every iteration, the data should at the first place of a row
     }
 }
 
@@ -72,20 +80,22 @@ static void down(int *data)
         for (j=GAME_SIZE-1,f=0,i=GAME_SIZE-1; i>=0; i--) {
             if (data[i*GAME_SIZE]) {
                 if (!f && j<GAME_SIZE-1 && data[(j+1)*GAME_SIZE] == data[i*GAME_SIZE]) {
-                    data[(j+1)*GAME_SIZE]+= data[i*GAME_SIZE]; f = 1;
+                    data[(j+1)*GAME_SIZE]+= data[i*GAME_SIZE]; 
+                    f = 1;          // represent one merge
                 } else {
-                    data[(j--)*GAME_SIZE] = data[i*GAME_SIZE]; f = 0;
+                    data[(j--)*GAME_SIZE] = data[i*GAME_SIZE]; 
+                    f = 0;          // represent one merge
                 }
             }
         }
         while (j >= 0) data[(j--)*GAME_SIZE] = 0;
-        data++;
+        data++;                     // every iteration, the data should at the first place of a row
     }
 }
 
 static int next(int *data)
 {
-    int empidx[GAME_SIZE*GAME_SIZE];
+    int empidx[GAME_SIZE*GAME_SIZE];            // indicates the empty space and its number
     int empnum = 0;
     int max    = 0;
     int i, j;
@@ -121,7 +131,7 @@ static void output(int *data)
         sum += data[i-1];
     }
     printf("+--------------------+\n\n");
-    printf("·ÖÊý£º%4d\n\n", sum);
+    printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½%4d\n\n", sum);
 }
 
 int main(void)
@@ -129,6 +139,7 @@ int main(void)
     int data[GAME_SIZE * GAME_SIZE] = {0};
     int ret = 0;
 
+    // At the beginning, release two places
     next  (data);
     next  (data);
     output(data);
