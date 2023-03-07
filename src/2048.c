@@ -1,13 +1,8 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <conio.h>
-#ifdef WIN32
-#include <windows.h>
-#endif
+#include "../inc/2048.h"
 
 #define GAME_SIZE  4
 
-static void left(int *data)
+void left(int *data)
 {
     int i, j, f;
     int row = GAME_SIZE;
@@ -30,7 +25,7 @@ static void left(int *data)
     }
 }
 
-static void right(int *data)
+void right(int *data)
 {
     int i, j, f;
     int row = GAME_SIZE;
@@ -51,7 +46,7 @@ static void right(int *data)
     }
 }
 
-static void up(int *data)
+void up(int *data)
 {
     int i, j, f;
     int col = GAME_SIZE;
@@ -72,7 +67,7 @@ static void up(int *data)
     }
 }
 
-static void down(int *data)
+void down(int *data)
 {
     int i, j, f;
     int col = GAME_SIZE;
@@ -93,7 +88,7 @@ static void down(int *data)
     }
 }
 
-static int next(int *data)
+int next(int *data)
 {
     int empidx[GAME_SIZE*GAME_SIZE];            // indicates the empty space and its number
     int empnum = 0;
@@ -114,7 +109,7 @@ static int next(int *data)
     else return -1;
 }
 
-static void output(int *data)
+void output(int *data)
 {
     int i, sum = 0;
 #ifdef WIN32
@@ -134,7 +129,7 @@ static void output(int *data)
     printf("������%4d\n\n", sum);
 }
 
-int main(void)
+void execute_2048(void)
 {
     int data[GAME_SIZE * GAME_SIZE] = {0};
     int ret = 0;
