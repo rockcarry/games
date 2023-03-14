@@ -126,7 +126,7 @@ void output(int *data)
         sum += data[i-1];
     }
     printf("+--------------------+\n\n");
-    printf("������%4d\n\n", sum);
+    printf("your step: %4d\n\n", sum);
 }
 
 void execute_2048(void)
